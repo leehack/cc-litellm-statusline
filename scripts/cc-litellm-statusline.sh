@@ -52,9 +52,9 @@ if [ -n "$LITELLM_API_KEY" ] && [ -n "$LITELLM_BASE_URL" ]; then
 
             # Determine color based on percentage (dimmed versions)
             # Green <75%, Yellow 75-90%, Red >90%
-            if [ $percent -gt 90 ]; then
+            if [ "$percent" -gt 90 ]; then
                 color="\033[2;31m"  # Dimmed red
-            elif [ $percent -gt 75 ]; then
+            elif [ "$percent" -gt 75 ]; then
                 color="\033[2;33m"  # Dimmed yellow
             else
                 color="\033[2;32m"  # Dimmed green
