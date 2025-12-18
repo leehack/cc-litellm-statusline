@@ -1,0 +1,82 @@
+name: Cross-Platform Tests
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test-unix:
+    name: Test on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Install dependencies
+      run: |
+        if [[ "$RUNNER_OS" == "macOS" ]]; then
+          brew install jq bc curl git
+        else
+          sudo apt-get update
+          sudo apt-get install -y jq bc curl git
+        fi
+
+    - name: Test statusline script
+      run: |
+        chmod +x scripts/cc-litellm-statusline.sh
+        echo '{"workspace":{"current_dir":"'$(pwd)'"}}' | ./scripts/cc-litellm-statusline.sh
+
+    - name: Test installer
+      run: |
+        chmod +x install-statusline-cross-platform.sh
+        # Dry run test - don't actually install
+        bash -n install-statusline-cross-platform.sh
+
+  test-windows:
+    name: Test on Windows
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup Git Bash
+      shell: bash
+      run: |
+        which bash
+        which jq || echo "jq not found"
+        which git || echo "git not found"
+
+    - name: Test statusline script (Git Bash)
+      shell: bash
+      run: |
+        chmod +x scripts/cc-litellm-statusline.sh
+        echo '{"workspace":{"current_dir":"'$(pwd)'"}}' | ./scripts/cc-litellm-statusline.sh || true
+
+    - name: Test PowerShell installer
+      shell: pwsh
+      run: |
+        # Syntax check only
+        powershell -ExecutionPolicy Bypass -File install-statusline.ps1 -WhatIf
+
+  lint:
+    name: Lint Scripts
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Install shellcheck
+      run: sudo apt-get install -y shellcheck
+
+    - name: Lint bash scripts
+      run: |
+        shellcheck scripts/cc-litellm-statusline.sh
+        shellcheck install-statusline-cross-platform.sh

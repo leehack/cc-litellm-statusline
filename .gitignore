@@ -1,0 +1,25 @@
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Environment files
+.env
+.env.local
+
+# API keys (just in case)
+*api*key*.txt
+*.secret
+
+# Logs
+*.log
+
+# Testing
+test-output/

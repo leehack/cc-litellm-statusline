@@ -1,0 +1,6 @@
+{
+  "statusline": {
+    "command": "~/.claude/cc-litellm-statusline.sh",
+    "refreshInterval": 5000
+  }
+}
